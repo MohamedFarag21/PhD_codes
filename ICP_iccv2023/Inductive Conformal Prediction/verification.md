@@ -46,4 +46,10 @@ This file contains a step-by-step checklist to verify that the codebase is worki
 
 ---
 
+## 8. Alpha Ablation Study
+- [ ] Run the ablation study over alpha (miscoverage) values for conformal prediction using the provided script/module.
+- **Notes/Results:**
+
+---
+
 *Add more tasks as needed to further verify the codebase or to test new features.* 

@@ -146,6 +146,19 @@ pytest tests/
    - Conformal prediction and OOD analysis
 3. Adjust hyperparameters (batch size, epochs, learning rate, alpha, etc.) as desired.
 
+## Verification Checklist
+
+To systematically verify that the codebase works as expected, see [`verification.md`](./verification.md). This file provides a step-by-step checklist for:
+- Data loading
+- Dataloader creation
+- Model building and training
+- Model evaluation
+- Conformalization and its evaluation
+- MC Dropout and sampling
+- Alpha ablation study
+
+Check off each task as you validate the workflow or use it for reproducibility and review.
+
 ---
 
 For more details, see the code and comments in each module and the `GrowliFLower_My_Model.ipynb` notebook.
