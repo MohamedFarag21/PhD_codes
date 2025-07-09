@@ -8,6 +8,8 @@ from train import train_model, EarlyStopper
 from eval import compute_metrics, get_predictions
 import torch.nn as nn
 import torch
+import argparse
+from conformalization import conformalize
 
 # 1. Set random seed
 set_seed(SEED)
@@ -32,4 +34,33 @@ train_model(model, tr_dl, vl_dl, criterion, optimizer, DEVICE, epochs=2, early_s
 
 # 7. Evaluation
 pred, gt = get_predictions(model, ts_dl, DEVICE)
-compute_metrics(gt, pred) 
+compute_metrics(gt, pred)
+
+import argparse
+from conformalization import conformalize
+
+def main(args):
+    # Load data, model, etc.
+    # Call conformalization functions
+    pass  # Fill in with your conformalization logic
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run conformalization process.")
+    # Add arguments as needed
+    args = parser.parse_args()
+    main(args) 
+
+
+import argparse
+from eval import mc_dropout_sampling
+
+def main(args):
+    # Load model, data, etc.
+    # Call MC Dropout sampling function
+    pass  # Fill in with your MC sampling logic
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run Monte Carlo Dropout sampling.")
+    # Add arguments as needed
+    args = parser.parse_args()
+    main(args)    
