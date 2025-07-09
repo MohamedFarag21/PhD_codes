@@ -1,4 +1,7 @@
-# GrowliFlower Image Classification
+# GrowliFlower Image Classification and Uncertainty Estimation
+
+**Related Paper:** This code is associated with the following publication: [Inductive Conformal Prediction for Harvest-Readiness Classification of Cauliflower Plants: A Comparative Study of Uncertainty Quantification Methods](https://ieeexplore.ieee.org/document/10350846)
+
 
 This project demonstrates deep learning-based classification of GrowliFlower images using PyTorch. The workflow includes data loading, preprocessing, model building (custom CNN, MC Dropout, and transfer learning), training, evaluation, and conformal prediction analysis.
 
