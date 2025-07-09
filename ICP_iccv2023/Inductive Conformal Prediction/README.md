@@ -42,6 +42,31 @@ You can install them with:
 pip install torch torchvision numpy pandas matplotlib pillow scikit-learn opencv-python seaborn pytest
 ```
 
+## Environment Setup
+
+This project provides both a `requirements.txt` (for pip users) and an `environment.yml` (for conda users) to help you quickly set up the required Python environment.
+
+### Using Conda (Recommended)
+1. Create the environment from the YAML file:
+   ```bash
+   conda env create -f environment.yml
+   conda activate <your_env_name>
+   ```
+   (The environment name is specified at the top of `environment.yml`.)
+
+### Using pip
+1. (Optional) Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+Both files are available in this repository. If you encounter any issues, see the Troubleshooting section in `help_me.md`.
+
 ## Project Structure
 ```
 ICP/
