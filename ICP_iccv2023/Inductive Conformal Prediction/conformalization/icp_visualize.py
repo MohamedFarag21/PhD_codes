@@ -3,14 +3,15 @@ import matplotlib.pyplot as plt
 
 def visualize_conformal_prediction_sets(X_test, test_smx, qhat, test_labels, model_test_pred, label_strings):
     """
-    Visualize and print conformal prediction sets for test images.
-    For each test image, display the image, print the prediction set, true label, model prediction, and softmax scores.
-    X_test: test images (N, H, W, C) or (N, C, H, W)
-    test_smx: test softmax outputs (N, num_classes)
-    qhat: quantile threshold
-    test_labels: true labels (N,)
-    model_test_pred: model predictions (N,)
-    label_strings: array of class label strings (num_classes,)
+    Visualize conformal prediction sets for test samples.
+
+    Args:
+        X_test (np.ndarray): Test images.
+        test_smx (np.ndarray): Test softmax outputs.
+        qhat (float): Conformal threshold.
+        test_labels (np.ndarray): True test labels.
+        model_test_pred (np.ndarray): Model predictions for test set.
+        label_strings (list): List of class label strings.
     """
     for i in range(test_labels.shape[0]):
         normalized_image = X_test[i]

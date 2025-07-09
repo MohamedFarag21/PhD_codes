@@ -4,9 +4,19 @@ from sklearn.metrics import accuracy_score
 def alpha_ablation(smx_val, gt_cp, test_final_smx, test_final_labels, model_final_test_pred, y_cp, alpha_range=None, n_samples=None):
     """
     Perform ablation over a range of alpha values for conformal prediction.
-    For each alpha, compute qhat, prediction sets, and count single, double, and empty sets.
-    Compute accuracy for single and double sets, and total accuracy for each alpha.
-    Returns arrays of single_pred_sets, double_pred_sets, empty_pred_sets, acc_alpha.
+
+    Args:
+        smx_val (np.ndarray): Softmax outputs for calibration set.
+        gt_cp (np.ndarray): Ground truth labels for calibration set.
+        test_final_smx (np.ndarray): Softmax outputs for test set.
+        test_final_labels (np.ndarray): True labels for test set.
+        model_final_test_pred (np.ndarray): Model predictions for test set.
+        y_cp (np.ndarray): Calibration labels.
+        alpha_range (array-like, optional): Range of alpha values to test.
+        n_samples (int, optional): Number of calibration samples.
+
+    Returns:
+        tuple: (single_pred_sets, double_pred_sets, empty_pred_sets, acc_alpha)
     """
     if alpha_range is None:
         alpha_range = np.linspace(0.1, 1, 100)

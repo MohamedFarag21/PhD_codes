@@ -62,13 +62,29 @@ for subdr in sub_dir:
 
 # 3. Load and resize images, extract labels
 def load_images(files, img_height=256, img_width=256, label_type=int):
+    """
+    Loads and resizes images from file paths, and extracts labels from filenames.
+
+    Args:
+        files (list): List of image file paths.
+        img_height (int): Height to resize images to.
+        img_width (int): Width to resize images to.
+        label_type (type): Type to cast label (int or str).
+
+    Returns:
+        images (np.ndarray): Array of images (N, H, W, C).
+        labels (np.ndarray): Array of labels (N,).
+    """
+    # Preallocate arrays for images and labels
     images = np.empty((len(files), img_height, img_width, 3), dtype=np.uint8)
     labels = np.empty((len(files),), dtype=np.int64)
     for i, filepath in enumerate(files):
+        # Open and resize image
         img = Image.open(filepath)
         resized_image = img.resize((img_height, img_width))
         arr = np.array(resized_image)
         images[i, :, :, :] = arr
+        # Extract label from filename
         labels[i] = label_type(filepath[-5])
     return images, labels
 

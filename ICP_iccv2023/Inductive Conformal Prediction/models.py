@@ -4,6 +4,16 @@ from torchvision.models import densenet169, DenseNet169_Weights
 
 
 def conv_bank(in_channels, out_channels):
+    """
+    Creates a sequence of convolutional, ReLU, BatchNorm, and MaxPool layers.
+
+    Args:
+        in_channels (int): Number of input channels.
+        out_channels (int): Number of output channels.
+
+    Returns:
+        nn.Sequential: Sequential block of layers.
+    """
     return nn.Sequential(
         nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=(3, 3), padding='same'),
         nn.ReLU(),
@@ -18,6 +28,13 @@ def conv_bank(in_channels, out_channels):
     )
 
 class LeNet(nn.Module):
+    """
+    LeNet-style convolutional neural network for image classification.
+
+    Args:
+        numChannels (int): Number of input channels.
+        classes (int): Number of output classes.
+    """
     def __init__(self, numChannels, classes):
         super(LeNet, self).__init__()
         self.bank1 = conv_bank(3, 64)
@@ -31,6 +48,15 @@ class LeNet(nn.Module):
         nn.init.xavier_normal_(self.fc1.weight)
 
     def forward(self, x):
+        """
+        Forward pass of the LeNet model.
+
+        Args:
+            x (torch.Tensor): Input tensor of shape (N, C, H, W).
+
+        Returns:
+            torch.Tensor: Output logits of shape (N, classes).
+        """
         x = self.bank1(x)
         x = self.bank2(x)
         x = self.bank3(x)
@@ -40,6 +66,15 @@ class LeNet(nn.Module):
 
 
 def get_transfer_model(num_classes):
+    """
+    Loads a pre-trained DenseNet169 model and freezes its parameters.
+
+    Args:
+        num_classes (int): Number of output classes.
+
+    Returns:
+        model (nn.Module): Modified DenseNet169 model.
+    """
     model = densenet169(weights=DenseNet169_Weights.DEFAULT)
     for param in model.parameters():
         param.requires_grad = False
@@ -47,6 +82,16 @@ def get_transfer_model(num_classes):
     return model 
 
 def conv_bank_MCdrop(in_channels, out_channels):
+    """
+    Creates a sequence of convolutional, Dropout2d, and ReLU layers for MC Dropout.
+
+    Args:
+        in_channels (int): Number of input channels.
+        out_channels (int): Number of output channels.
+
+    Returns:
+        nn.Sequential: Sequential block of layers with dropout.
+    """
     return nn.Sequential(
         nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=(3, 3), padding='same'),
         nn.Dropout2d(p=0.1),
@@ -61,6 +106,13 @@ def conv_bank_MCdrop(in_channels, out_channels):
     )
 
 class LeNet_MC(nn.Module):
+    """
+    LeNet variant with Monte Carlo Dropout for uncertainty estimation.
+
+    Args:
+        numChannels (int): Number of input channels.
+        classes (int): Number of output classes.
+    """
     def __init__(self, numChannels, classes):
         super(LeNet_MC, self).__init__()
         self.bank1 = conv_bank_MCdrop(3, 64)
@@ -77,6 +129,15 @@ class LeNet_MC(nn.Module):
         nn.init.xavier_normal_(self.fc1.weight)
 
     def forward(self, x):
+        """
+        Forward pass with dropout active at inference for MC sampling.
+
+        Args:
+            x (torch.Tensor): Input tensor of shape (N, C, H, W).
+
+        Returns:
+            torch.Tensor: Output logits of shape (N, classes).
+        """
         x = self.bn1(self.bank1(x))
         x = self.bn2(self.bank2(x))
         x = self.bank3(x)

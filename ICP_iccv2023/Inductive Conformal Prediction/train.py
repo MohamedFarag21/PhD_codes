@@ -2,6 +2,13 @@ import torch
 import numpy as np
 
 class EarlyStopper:
+    """
+    Early stopping utility to halt training when validation loss stops improving.
+
+    Args:
+        patience (int): Number of epochs to wait after last improvement.
+        min_delta (float): Minimum change to qualify as improvement.
+    """
     def __init__(self, patience=1, min_delta=0):
         self.patience = patience
         self.min_delta = min_delta
@@ -9,6 +16,17 @@ class EarlyStopper:
         self.min_validation_loss = np.inf
 
     def early_stop(self, validation_loss, model=None, save_path=None):
+        """
+        Checks if early stopping condition is met.
+
+        Args:
+            validation_loss (float): Current validation loss.
+            model (nn.Module, optional): Model to save if improved.
+            save_path (str, optional): Path to save the model.
+
+        Returns:
+            bool: True if training should stop, False otherwise.
+        """
         if validation_loss < self.min_validation_loss:
             self.min_validation_loss = validation_loss
             if model is not None and save_path is not None:
@@ -22,6 +40,23 @@ class EarlyStopper:
         return False
 
 def train_model(model, tr_dloader, vl_dloader, criterion, optimizer, device, epochs, early_stopper=None, save_path=None):
+    """
+    Train a model with optional early stopping and save best weights.
+
+    Args:
+        model (nn.Module): The neural network to train.
+        tr_dloader (DataLoader): DataLoader for training data.
+        vl_dloader (DataLoader): DataLoader for validation data.
+        criterion (nn.Module): Loss function.
+        optimizer (torch.optim.Optimizer): Optimizer.
+        device (str): Device to train on ('cpu' or 'cuda').
+        epochs (int): Maximum number of epochs.
+        early_stopper (EarlyStopper, optional): Early stopping utility.
+        save_path (str, optional): Path to save best model.
+
+    Returns:
+        tuple: (train_losses, val_losses, trn_accuracy, val_accuracy)
+    """
     torch.manual_seed(78)
     train_losses = []
     val_losses = []
@@ -84,8 +119,21 @@ def train_model(model, tr_dloader, vl_dloader, criterion, optimizer, device, epo
 
 def train_mc_model(model, tr_dloader, vl_dloader, criterion, optimizer, device, epochs, early_stopper=None, save_path='mymodel_mc_256_bottleneck_balancing_correct.pt'):
     """
-    Train a Monte Carlo Dropout model (e.g., LeNet_MC) with the same logic as train_model,
-    but with a default save_path for MC models. This function is provided for clarity and
-    future MC-specific extensions.
+    Train a Monte Carlo Dropout model (e.g., LeNet_MC) with the same logic as train_model.
+    This function is provided for clarity and future MC-specific extensions.
+
+    Args:
+        model (nn.Module): The MC Dropout model to train.
+        tr_dloader (DataLoader): DataLoader for training data.
+        vl_dloader (DataLoader): DataLoader for validation data.
+        criterion (nn.Module): Loss function.
+        optimizer (torch.optim.Optimizer): Optimizer.
+        device (str): Device to train on ('cpu' or 'cuda').
+        epochs (int): Maximum number of epochs.
+        early_stopper (EarlyStopper, optional): Early stopping utility.
+        save_path (str, optional): Path to save best model.
+
+    Returns:
+        tuple: (train_losses, val_losses, trn_accuracy, val_accuracy)
     """
     return train_model(model, tr_dloader, vl_dloader, criterion, optimizer, device, epochs, early_stopper, save_path) 

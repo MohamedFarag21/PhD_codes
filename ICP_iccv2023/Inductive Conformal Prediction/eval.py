@@ -7,12 +7,28 @@ from sklearn.metrics import (
 import matplotlib.pyplot as plt
 
 def plot_loss(train_loss, val_loss):
-    """Plot training and validation loss curves."""
+    """
+    Plot training and validation loss curves (placeholder).
+
+    Args:
+        train_loss (list): Training loss values.
+        val_loss (list): Validation loss values.
+    """
     # TODO: Insert plotting logic from notebook
-    pass 
+    pass
 
 def get_predictions(model, dataloader, device):
-    """Collect predictions and ground truth from a dataloader."""
+    """
+    Collect predictions and ground truth from a dataloader.
+
+    Args:
+        model (nn.Module): Trained model.
+        dataloader (DataLoader): DataLoader for evaluation data.
+        device (str): Device to run evaluation on.
+
+    Returns:
+        tuple: (pred_all, gt_all) as numpy arrays.
+    """
     model.eval()
     predictions = []
     gt = []
@@ -29,14 +45,31 @@ def get_predictions(model, dataloader, device):
     return pred_all, gt_all
 
 def plot_confusion_matrix(pred, gt, class_labels=('0', '1'), cmap='inferno'):
-    """Plot a normalized confusion matrix."""
+    """
+    Plot a normalized confusion matrix.
+
+    Args:
+        pred (array-like): Predicted labels.
+        gt (array-like): Ground truth labels.
+        class_labels (tuple): Class label names.
+        cmap (str): Colormap for the plot.
+    """
     cm = confusion_matrix(pred, gt, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=np.array(class_labels))
     disp.plot(cmap=cmap)
     plt.show()
 
 def compute_metrics(gt, pred):
-    """Compute and print classification metrics."""
+    """
+    Compute and print classification metrics.
+
+    Args:
+        gt (array-like): Ground truth labels.
+        pred (array-like): Predicted labels.
+
+    Returns:
+        dict: Dictionary with accuracy, balanced accuracy, F1 score, and report.
+    """
     acc = accuracy_score(gt, pred)
     bal_acc = balanced_accuracy_score(gt, pred)
     f1 = f1_score(gt, pred, average='weighted')
@@ -45,16 +78,35 @@ def compute_metrics(gt, pred):
     print(f"Balanced Accuracy: {bal_acc:.4f}")
     print(f"F1 Score: {f1:.4f}")
     print("Classification Report:\n", report)
-    return {'accuracy': acc, 'balanced_accuracy': bal_acc, 'f1': f1, 'report': report} 
+    return {'accuracy': acc, 'balanced_accuracy': bal_acc, 'f1': f1, 'report': report}
 
 # --- MC Dropout Model Evaluation ---
 def load_mc_model(model, path):
-    """Load MC Dropout model weights from file."""
+    """
+    Load MC Dropout model weights from file.
+
+    Args:
+        model (nn.Module): Model instance.
+        path (str): Path to weights file.
+
+    Returns:
+        nn.Module: Model with loaded weights.
+    """
     model.load_state_dict(torch.load(path))
     return model
 
 def eval_mc_model(model, dataloader, device):
-    """Evaluate MC Dropout model: collect predictions, ground truth, and logits (softmax outputs)."""
+    """
+    Evaluate MC Dropout model: collect predictions, ground truth, and logits (softmax outputs).
+
+    Args:
+        model (nn.Module): MC Dropout model.
+        dataloader (DataLoader): DataLoader for evaluation data.
+        device (str): Device to run evaluation on.
+
+    Returns:
+        tuple: (pred_all, gt_all, logits_all)
+    """
     model.eval()
     predictions = []
     gt = []
@@ -74,23 +126,49 @@ def eval_mc_model(model, dataloader, device):
     return pred_all, gt_all, logits_all
 
 def process_mc_outputs(logits):
-    """Exponentiate logits to get probabilities."""
+    """
+    Exponentiate logits to get probabilities.
+
+    Args:
+        logits (torch.Tensor): Logits from model.
+
+    Returns:
+        torch.Tensor: Probabilities after exponentiation.
+    """
     return torch.exp(logits)
 
 def compute_mc_metrics(gt, pred, class_labels=('0', '1')):
-    """Compute accuracy and plot confusion matrix for MC Dropout model."""
+    """
+    Compute accuracy and plot confusion matrix for MC Dropout model.
+
+    Args:
+        gt (array-like): Ground truth labels.
+        pred (array-like): Predicted labels.
+        class_labels (tuple): Class label names.
+
+    Returns:
+        float: Accuracy value.
+    """
     gt_np = gt.cpu().numpy() if torch.is_tensor(gt) else gt
     pred_np = pred.cpu().numpy() if torch.is_tensor(pred) else pred
     acc = accuracy_score(gt_np, pred_np)
     print(f"Accuracy: {acc:.4f}")
     plot_confusion_matrix(pred_np, gt_np, class_labels=class_labels)
-    return acc 
+    return acc
 
 def mc_dropout_sampling(model, dataloader, device, num_samples=1000):
     """
     Perform Monte Carlo sampling for uncertainty estimation with an MC Dropout model.
     For each sample, sets dropout layers to train mode, freezes all parameters, and collects logits for each batch.
-    Returns a tensor of shape (num_samples, N, num_classes) with all sampled logits.
+
+    Args:
+        model (nn.Module): MC Dropout model.
+        dataloader (DataLoader): DataLoader for evaluation data.
+        device (str): Device to run evaluation on.
+        num_samples (int): Number of MC samples.
+
+    Returns:
+        torch.Tensor: Tensor of shape (num_samples, N, num_classes) with all sampled logits.
     """
     import torch.nn as nn
     model.eval()
@@ -115,11 +193,20 @@ def mc_dropout_sampling(model, dataloader, device, num_samples=1000):
         sample_logits = torch.cat(sample_logits, dim=0)
         all_samples.append(sample_logits.unsqueeze(0))
     all_samples = torch.cat(all_samples, dim=0)  # (num_samples, N, num_classes)
-    return all_samples 
+    return all_samples
 
 def stack_and_reshape_mc_samples(samples_list, num_samples, N, num_classes):
     """
     Stack a list of MC sample tensors and reshape to (num_samples, N, num_classes).
+
+    Args:
+        samples_list (list): List of MC sample tensors.
+        num_samples (int): Number of MC samples.
+        N (int): Number of data points.
+        num_classes (int): Number of classes.
+
+    Returns:
+        torch.Tensor: Stacked and reshaped tensor.
     """
     stacked = torch.cat([x for x in samples_list], dim=0)
     return stacked.view(num_samples, N, num_classes)
@@ -127,20 +214,40 @@ def stack_and_reshape_mc_samples(samples_list, num_samples, N, num_classes):
 def get_mc_probabilities(mc_logits):
     """
     Apply torch.exp to MC logits to get probabilities.
+
+    Args:
+        mc_logits (torch.Tensor): MC logits.
+
+    Returns:
+        torch.Tensor: Probabilities.
     """
     return torch.exp(mc_logits)
 
 def get_mc_std(mc_samples):
     """
     Compute standard deviation across MC samples (dim=0) for uncertainty estimation.
-    Returns a tensor of shape (N, num_classes).
+
+    Args:
+        mc_samples (torch.Tensor): MC sample outputs.
+
+    Returns:
+        torch.Tensor: Standard deviation tensor of shape (N, num_classes).
     """
-    return mc_samples.std(dim=0) 
+    return mc_samples.std(dim=0)
 
 def mc_dropout_sampling_freeze_bn(model, dataloader, device, num_samples=1000):
     """
     Monte Carlo Dropout sampling with BatchNorm layers frozen (weights/biases not updated, running stats not updated).
     Returns a list of accuracy values (one per sample).
+
+    Args:
+        model (nn.Module): MC Dropout model.
+        dataloader (DataLoader): DataLoader for evaluation data.
+        device (str): Device to run evaluation on.
+        num_samples (int): Number of MC samples.
+
+    Returns:
+        list: List of accuracy values (one per sample).
     """
     import torch.nn as nn
     from sklearn.metrics import accuracy_score

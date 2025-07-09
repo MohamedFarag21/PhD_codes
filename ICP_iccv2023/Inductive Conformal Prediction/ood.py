@@ -5,9 +5,14 @@ import seaborn as sns
 
 def add_black_box(image, box_size):
     """
-    Add a black box of size box_size x box_size to the center of the image.
-    image: numpy array (H, W, C)
-    Returns a new numpy array with the black box applied.
+    Add a black box of given size to the center of the image.
+
+    Args:
+        image (np.ndarray): Input image array (H, W, C).
+        box_size (int): Size of the black box.
+
+    Returns:
+        np.ndarray: Image with black box occlusion.
     """
     h, w = image.shape[:2]
     center_h, center_w = h // 2, w // 2

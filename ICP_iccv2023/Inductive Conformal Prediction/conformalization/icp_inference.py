@@ -4,10 +4,14 @@ import numpy as np
 def prepare_test_softmax_and_labels(test_smx_raw, pred_test, gt_test):
     """
     Prepare test softmax outputs and labels for conformal prediction inference.
-    test_smx_raw: list of raw softmax outputs (logits)
-    pred_test: predicted labels
-    gt_test: ground truth labels
-    Returns: test_smx (N, num_classes), y_cp_test (N,), gt_cp_test (N,)
+
+    Args:
+        test_smx_raw (np.ndarray): Raw softmax outputs for test set.
+        pred_test (np.ndarray): Predicted labels for test set.
+        gt_test (np.ndarray): Ground truth labels for test set.
+
+    Returns:
+        tuple: (test_smx, test_labels, model_test_pred)
     """
     temp = torch.cat([x for x in test_smx_raw], dim=0)
     temp = torch.exp(temp)

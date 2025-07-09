@@ -5,15 +5,19 @@ import seaborn as sns
 
 def cp_check(smx_val, gt_cp, y_cp, n=100, alpha=0.1, r=1000, seed=None):
     """
-    Run conformal prediction r times with random splits, returning empirical coverage for each run.
-    smx_val: softmax outputs (N, num_classes)
-    gt_cp: ground truth labels (N,)
-    y_cp: predicted labels (N,)
-    n: number of calibration samples
-    alpha: miscoverage level
-    r: number of repetitions
-    seed: random seed for reproducibility
-    Returns: list of empirical coverage values (length r)
+    Perform conformal prediction check with repeated random splits.
+
+    Args:
+        smx_val (np.ndarray): Softmax outputs for validation set.
+        gt_cp (np.ndarray): Ground truth labels for calibration/test.
+        y_cp (np.ndarray): Predicted labels for calibration/test.
+        n (int): Number of calibration samples.
+        alpha (float): Miscoverage level.
+        r (int): Number of repetitions.
+        seed (int, optional): Random seed.
+
+    Returns:
+        tuple: (mean_coverage, std_coverage) over repetitions.
     """
     final_empirical_coverage = []
     N = smx_val.shape[0]

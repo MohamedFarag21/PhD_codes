@@ -5,7 +5,14 @@ import seaborn as sns
 from sklearn.metrics import accuracy_score
 
 def plot_loss_curves(train_losses, val_losses, title='My Model'):
-    """Plot training and validation loss curves."""
+    """
+    Plot training and validation loss curves.
+
+    Args:
+        train_losses (list): Training loss values per epoch.
+        val_losses (list): Validation loss values per epoch.
+        title (str): Title for the plot.
+    """
     train_hist = torch.tensor(train_losses).detach().cpu().numpy()
     val_hist = torch.tensor(val_losses).detach().cpu().numpy()
     plt.plot(np.array(train_hist))
@@ -20,8 +27,10 @@ def plot_loss_curves(train_losses, val_losses, title='My Model'):
 def plot_mc_accuracy_distribution(mc_acc, save_path=None):
     """
     Plot the distribution of test accuracy over multiple Monte Carlo samplings.
-    mc_acc: list or array of accuracy values from MC runs.
-    save_path: if provided, saves the figure to this path.
+
+    Args:
+        mc_acc (list or np.ndarray): List of accuracy values from MC runs.
+        save_path (str, optional): If provided, saves the figure to this path.
     """
     sns.set(style="ticks")
     plt.figure(dpi=600)
@@ -41,11 +50,13 @@ def plot_mc_accuracy_distribution(mc_acc, save_path=None):
 def plot_accuracy_vs_threshold(prob_class1, gt_labels, pred_labels=None, thresholds=None, save_path=None):
     """
     Plot model accuracy as a function of the decision threshold.
-    prob_class1: array of predicted probabilities for class 1.
-    gt_labels: ground truth labels (0/1).
-    pred_labels: predicted labels at default threshold (for reference line), optional.
-    thresholds: array of thresholds to evaluate, default np.linspace(0, 1, 100).
-    save_path: if provided, saves the figure to this path.
+
+    Args:
+        prob_class1 (array-like): Predicted probabilities for class 1.
+        gt_labels (array-like): Ground truth labels (0/1).
+        pred_labels (array-like, optional): Predicted labels at default threshold (for reference line).
+        thresholds (array-like, optional): Thresholds to evaluate.
+        save_path (str, optional): If provided, saves the figure to this path.
     """
     if thresholds is None:
         thresholds = np.linspace(0, 1, 100)
